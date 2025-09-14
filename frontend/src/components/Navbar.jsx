@@ -4,7 +4,7 @@ const Navbar = ({ currentPage, onNavigate, onLogout, token }) => {
   return (
     <nav className="bg-white shadow-md p-4 rounded-xl flex justify-between w-[100%] items-center mb-6">
       <div className="text-2xl font-bold text-gray-800">
-        <a href="#" onClick={() => onNavigate('login')}>Eduviron Pay</a>
+        <a href="#" onClick={() => onNavigate('login')}>Edviron </a>
       </div>
       <div>
         {!token ? (
