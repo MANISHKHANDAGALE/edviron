@@ -1,42 +1,190 @@
-School Payment and Dashboard ApplicationThis project is a full-stack application for managing school payments and transactions. It consists of a backend microservice and a responsive frontend dashboard.FeaturesBackend (Node.js)REST API: A microservice built with Node.js and NestJS for managing transactions and payments.Payment Gateway Integration: Integrates with the Edviron Payment API to generate payment links and handle transactions.Webhook Integration: A dedicated endpoint to receive and process webhook payloads for real-time transaction status updates.JWT Authentication: All API endpoints are secured using JSON Web Tokens (JWT).Database Management: Uses MongoDB Atlas to store order, transaction, and webhook log data.API Endpoints:POST /create-payment: Initiates a payment request.POST /webhook: Receives payment updates from the gateway.GET /transactions: Fetches a paginated and sortable list of all transactions.GET /transactions/school/:schoolId: Fetches all transactions for a specific school.GET /transaction-status/:custom_order_id: Checks the status of a specific transaction.Error Handling & Validation: Proper data validation and consistent error responses.Scalability & Performance: Implements pagination, sorting, and database indexing for efficient data retrieval.Frontend (React.js)Responsive Dashboard: A user-friendly interface built with React.js.API Integration: Uses Axios to fetch and manage data from the backend APIs.Dashboard Pages:Transactions Overview: Displays a searchable and sortable table of all transactions. Includes multi-select filters for status, school IDs, and date ranges.Transaction Details by School: A dedicated page to view transactions for a specific school ID.Transaction Status Check: A modal or page to check the status of a transaction using its custom order ID.Styling: Styled using Tailwind CSS to ensure a modern and responsive design.Project SetupPrerequisitesNode.js (LTS version recommended)MongoDB Atlas accountPayment Gateway credentials (provided in the assessment document)Backend SetupClone the repository:git clone [https://github.com/your-username/your-repo-name.git](https://github.com/your-username/your-repo-name.git)
-cd your-repo-name/backend
-Install dependencies:npm install
-Create a .env file in the root directory and add the following environment variables:MONGO_URI="your_mongodb_atlas_connection_string"
-PG_KEY="edvtest01"
-API_KEY="your_api_key"
-SCHOOL_ID="your_school_id"
-JWT_SECRET="your_jwt_secret"
-JWT_EXPIRY="1h"
-Run the application:npm run start
-Frontend SetupNavigate to the frontend directory:cd ../frontend
-Install dependencies:npm install
-Create a .env file in the root directory for your API URL.VITE_BACKEND_API_URL="http://localhost:3000" # or your hosted backend URL
-Run the application:npm run dev
-API DocumentationPayment Gateway API IntegrationThis project integrates with the Edviron Payment API. The documentation for the external APIs is as follows:Create Payment:Endpoint: POST https://dev-vanilla.edviron.com/erp/create-collect-requestDescription: Generates a payment link for a given school and amount.Authentication: Bearer Token.Request Body:{
-  "school_id": "<string>",
-  "amount": "<string>",
-  "callback_url": "<string>",
-  "sign": "<string>" // JWT signed payload
+# 📖 Edviron Payments System – Full Documentation
+
+## 📌 Overview
+This project is a **full-stack payments system** for schools, built with:  
+
+- **Backend:** Express.js + MongoDB  
+- **Frontend:** React (Vite) + TailwindCSS  
+- **Integration:** Edviron `create-collect` API + Webhooks  
+
+It allows:  
+✅ Generating payment links for students (Create Collect)  
+✅ Processing real-time payment updates via Webhooks  
+✅ Storing transactions in MongoDB  
+✅ Viewing transaction history in a paginated dashboard  
+
+---
+
+## ⚙️ Setup & Installation
+
+### 1. Clone Repository
+```bash
+git clone https://github.com/your-repo/edviron-payments.git
+cd edviron-payments
+```
+
+### 2. Backend Setup
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+#### Environment Variables (`backend/.env`)
+```env
+PORT=4000
+MONGO_URI=mongodb://localhost:27017/edviron
+EDVIRON_API_KEY=your_edviron_api_key
+EDVIRON_SECRET=your_webhook_secret
+```
+
+### 3. Frontend Setup
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Visit 👉 [http://localhost:5173](http://localhost:5173)
+
+---
+
+## 🔑 Environment Variables (Backend)
+
+| Variable            | Description |
+|---------------------|-------------|
+| `PORT`              | Port for Express backend (default `4000`) |
+| `MONGO_URI`         | MongoDB connection string |
+| `EDVIRON_API_KEY`   | API key from Edviron (for create-collect requests) |
+| `EDVIRON_SECRET`    | Secret key from Edviron (used for verifying webhook signatures) |
+
+---
+
+## 📡 API Documentation
+
+### 1. Create Collect (Generate Payment Link)
+**Endpoint:**  
+```
+POST /api/payments/create
+```
+
+**Request Body:**
+```json
+{
+  "school_id": "65b0e6293e9f76a9694d84b4",
+  "amount": "2000",
+  "order_id": "ORDER123",
+  "student_name": "John Doe",
+  "phone": "9876543210"
 }
-JWT Payload for sign:{
-  "school_id": "<string>",
-  "amount": "<string>",
-  "callback_url": "<string>"
+```
+
+**Response:**
+```json
+{
+  "collect_id": "68c2a4cafe1ebb315a0bf662",
+  "payment_url": "https://dev-vanilla.edviron.com/pay/..."
 }
-Response:{
-  "collect_request_id": "6808bc4888e4e3c149e757f1",
-  "Collect_request_url": "<url>",
-  "sign": "<string>" // JWT token
+```
+
+---
+
+### 2. Transactions (Paginated List)
+**Endpoint:**  
+```
+GET /api/transactions?page=1&limit=10
+```
+
+**Response:**
+```json
+{
+  "page": 1,
+  "limit": 10,
+  "totalPages": 3,
+  "results": [
+    {
+      "collect_id": "68c2a4cafe1ebb315a0bf662",
+      "order_amount": 2000,
+      "transaction_amount": 2000,
+      "status": "success",
+      "payment_mode": "UPI",
+      "student_name": "John Doe",
+      "phone": "9876543210",
+      "payment_time": "2025-09-11T12:34:56.000Z"
+    }
+  ]
 }
-Check Payment Status:Endpoint: GET https://dev-vanilla.edviron.com/erp/collect-request/{collect_request_id}?school_id={school_id}&sign={sign}Description: Checks the status of a previously created payment request.Authentication: Bearer Token.Query Parameters:collect_request_id: The unique ID returned when the request was created.school_id: The unique school ID.sign: JWT signed payload.JWT Payload for sign:{
-  "school_id": "<string>",
-  "collect_request_id": "<string>"
+```
+
+---
+
+### 3. Webhook (Payment Update)
+**Endpoint (Edviron calls this):**  
+```
+POST /api/webhook/payment
+```
+
+**Payload:**
+```json
+{
+  "payload": {
+    "order_id": "ORDER123",
+    "collect_id": "68c2a4cafe1ebb315a0bf662",
+    "transaction_amount": 2000,
+    "status": "success"
+  },
+  "sign": "sha256=..."
 }
-Response:{
-  "status": "SUCCESS",
-  "amount": 100,
-  "details": {},
-  "payment_methods": null,
-  "jwt": "<token>"
-}
-Backend Internal API EndpointsGET /transactionsDescription: Fetches all transactions with pagination and sorting support.Query Parameters: ?limit=10&page=1&sort=payment_time&order=descGET /transactions/school/:schoolIdDescription: Fetches all transactions for a specific school.GET /transaction-status/:custom_order_idDescription: Returns the current status of a transaction.POST /webhookDescription: Receives and processes webhook payload from the payment gateway to update the database.Postman CollectionA Postman collection is highly recommended for testing all API endpoints. You will need to import the collection and configure your environment variables with the necessary keys.Database SchemasOrder Schema_id: ObjectIdschool_id: ObjectId/stringtrustee_id: ObjectId/stringstudent_info: { name: string, id: string, email: string }gateway_name: stringOrder Status Schemacollect_id: ObjectId (references Order schema)order_amount: numbertransaction_amount: numberpayment_mode: stringpayment_details: stringbank_reference: stringpayment_message: stringstatus: stringerror_message: stringpayment_time: DateWebhook Logs SchemaCustom schema to store webhook-related logs for debugging.ScreenshotsTransaction Table Layout:DeploymentThe project can be deployed to a cloud platform. The backend can be hosted on services like Heroku or AWS, while the frontend can be deployed to Netlify, Vercel, or AWS Amplify.
+```
+
+**Processing:**
+- Backend verifies the **HMAC signature** in `sign`.  
+- If valid → update DB record with new status.  
+- If invalid → reject (possible fraud).  
+
+---
+
+## 🧪 Postman / ThunderClient Collection
+
+You can import the included `EdvironPayments.postman_collection.json` (or ThunderClient export) to test all APIs.  
+
+Collection includes:
+- **Create Collect** (with sample payload)  
+- **Webhook Simulation** (send test webhook events)  
+- **Transactions List** (with pagination params)  
+
+👉 To simulate webhooks, send a `POST` request to `/api/webhook/payment` with a test payload.  
+
+---
+
+## 🔗 Data Flow Diagram
+
+```mermaid
+flowchart LR
+    A[Frontend (React)] -->|POST /payments/create| B[Backend (Express.js)]
+    B -->|POST create-collect-request| C[Edviron API]
+    C -->|Response (collect_id + link)| B
+    B -->|Save pending transaction| D[(MongoDB)]
+    A -->|GET /transactions| B
+    B -->|Return history| A
+    C -->|Webhook (payload+sign)| E[Backend Webhook]
+    E -->|Verify + update status| D
+    D -->|Updated data| A
+```
+
+---
+
+## 🎨 Frontend Features
+- Transaction History Page with:
+  - Search bar  
+  - Filters (Date, Status, Institute)  
+  - Paginated table  
+  - Row hover effects  
+  - Status highlighting (🟢 success, 🟡 pending, 🔴 failed)  
+
+---
+
+## ✅ Summary
+- **Backend:** Handles Edviron API integration, signature verification, transaction persistence.  
+- **Frontend:** Displays payment history in a modern UI.  
+- **Data flow:** Frontend → Backend → Edviron → Webhook → DB → Frontend.  
