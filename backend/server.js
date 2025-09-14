@@ -19,6 +19,13 @@ app.use(express.json());
 // connect to MongoDB
 connectDB();
 
+//welcome
+app.get("/", (req, res) => {
+  res.send("✅ Edviron Backend API is running");
+});
+app.get("/api", (req, res) => {
+  res.send("✅ Edviron Backend API is running");
+});
 // routes
 app.use('/api/auth', authRoutes);
 app.use('/api/payments', paymentRoutes);

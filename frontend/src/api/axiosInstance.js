@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: 'https://edviron-0dv5.onrender.com/api',
 });
 
 // Add a request interceptor to include the authorization header
