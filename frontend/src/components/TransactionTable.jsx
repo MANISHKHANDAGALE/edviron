@@ -5,15 +5,15 @@ const TransactionTable = ({ transactions, searchQuery }) => {
     transaction.custom_order_id.toLowerCase().includes(searchQuery.toLowerCase())
   ).map((tx, index) => ({
     srNo: index + 1,
-    instituteName: 'N/A', // Assuming data is not available
+    instituteName: tx.school_id, // Assuming data is not available
     date: tx.payment_time || new Date().toISOString(),
     orderId: tx.custom_order_id,
     orderAmount: tx.order_amount,
     transactionAmount: tx.transaction_amount || 'N/A',
     paymentMethod: tx.gateway,
     status: tx.status,
-    studentName: 'N/A', // Assuming data is not available
-    phoneNo: 'N/A', // Assuming data is not available
+    studentName: tx.student_name || 'N/A', // Assuming data is not available
+    email: tx.student_email || 'N/A', // Assuming data is not available
   }));
 
   return (
@@ -22,21 +22,21 @@ const TransactionTable = ({ transactions, searchQuery }) => {
         <thead className="bg-gray-50">
           <tr>
             <th className="px-4 py-2 text-left text-gray-600 font-semibold rounded-tl-lg">Sr.No</th>
-            <th className="px-4 py-2 text-left text-gray-600 font-semibold">Institute Name</th>
+            <th className="px-4 py-2 text-left text-gray-600 font-semibold">Institute ID</th>
             <th className="px-4 py-2 text-left text-gray-600 font-semibold">Date & Time</th>
             <th className="px-4 py-2 text-left text-gray-600 font-semibold">Order ID</th>
             <th className="px-4 py-2 text-left text-gray-600 font-semibold">Order Amt</th>
             <th className="px-4 py-2 text-left text-gray-600 font-semibold">Transaction Amt</th>
-            <th className="px-4 py-2 text-left text-gray-600 font-semibold">Payment Method</th>
+            <th className="px-4 py-2 text-left text-gray-600 font-semibold">payment_mode</th>
             <th className="px-4 py-2 text-left text-gray-600 font-semibold">Status</th>
             <th className="px-4 py-2 text-left text-gray-600 font-semibold">Student Name</th>
-            <th className="px-4 py-2 text-left text-gray-600 font-semibold rounded-tr-lg">Phone No.</th>
+            <th className="px-4 py-2 text-left text-gray-600 font-semibold rounded-tr-lg">Student Email</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
           {filteredTransactions.length > 0 ? (
             filteredTransactions.map((tx, index) => (
-              <tr key={index} className="hover:bg-gray-50">
+              <tr key={index} className="hover:bg-gray-50  hover:scale-101 hover:shadow-md cursor-pointer">
                 <td className="px-4 py-2">{tx.srNo}</td>
                 <td className="px-4 py-2">{tx.instituteName}</td>
                 <td className="px-4 py-2">{new Date(tx.date).toLocaleString()}</td>
@@ -50,7 +50,7 @@ const TransactionTable = ({ transactions, searchQuery }) => {
                   </span>
                 </td>
                 <td className="px-4 py-2">{tx.studentName}</td>
-                <td className="px-4 py-2">{tx.phoneNo}</td>
+                <td className="px-4 py-2">{tx.email}</td>
               </tr>
             ))
           ) : (

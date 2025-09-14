@@ -33,12 +33,14 @@ export async function getTransactions(req, res) {
         $project: {
           collect_id: '$_id',
           school_id: '$school_id',
-          gateway: '$orderStatus.gateway',
+          gateway: '$orderStatus.payment_mode',
           order_amount: '$orderStatus.order_amount',
           transaction_amount: '$orderStatus.transaction_amount',
           status: '$orderStatus.status',
           custom_order_id: '$custom_order_id',
-          payment_time: '$orderStatus.payment_time'
+          payment_time: '$orderStatus.payment_time',
+          student_name: '$student_info.name',
+          student_email: '$student_info.email'
         }
       },
       { $match: match },
@@ -74,7 +76,7 @@ export async function getTransactionsBySchool(req, res) {
         $project: {
           collect_id: '$_id',
           school_id: '$school_id',
-          gateway: '$orderStatus.gateway',
+          gateway: '$orderStatus.payment_mode',
           order_amount: '$orderStatus.order_amount',
           transaction_amount: '$orderStatus.transaction_amount',
           status: '$orderStatus.status',

@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
       // create a new order and/or status if you want; here we create a status record with minimal linkage
       const order = await Order.create({
         school_id: orderInfo.school_id || 'unknown',
-        gateway_name: orderInfo.gateway || 'unknown',
+        gateway_name: orderInfo.payment_mode || 'unknown',
         custom_order_id: orderInfo.order_id || `unlinked-${Date.now()}`
       });
 
