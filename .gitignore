@@ -5,6 +5,7 @@ backend/node_modules/
 # Build folders
 frontend/build/
 backend/dist/
-# env
-backend/.env
+
+# Env
+frontend/.env
 backend/.env
