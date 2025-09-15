@@ -1,11 +1,7 @@
 # 📖 Edviron Payments System  
 
-![React](https://img.shields.io/badge/Frontend-React-blue?logo=react)  
-![TailwindCSS](https://img.shields.io/badge/UI-TailwindCSS-38B2AC?logo=tailwindcss)  
-![Node.js](https://img.shields.io/badge/Backend-Node.js-green?logo=node.js)  
-![Express](https://img.shields.io/badge/API-Express-black?logo=express)  
-![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?logo=mongodb)  
-![Vite](https://img.shields.io/badge/Build-Vite-purple?logo=vite)  
+![React](https://img.shields.io/badge/Frontend-React-blue?logo=react)![TailwindCSS](https://img.shields.io/badge/UI-TailwindCSS-38B2AC?logo=tailwindcss)![Node.js](https://img.shields.io/badge/Backend-Node.js-green?logo=node.js)  
+![Express](https://img.shields.io/badge/API-Express-black?logo=express)![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?logo=mongodb) ![Vite](https://img.shields.io/badge/Build-Vite-purple?logo=vite)  
 
 ---
 
