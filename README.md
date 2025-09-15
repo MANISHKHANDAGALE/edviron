@@ -81,9 +81,6 @@ Request:
 {
   "school_id": "65b0e6293e9f76a9694d84b4",
   "amount": "2000",
-  "order_id": "ORDER123",
-  "student_name": "manish",
-  "phone": "9876543210",
   "callback_url" : edviron.com,
   "sign" : this is generated using jwt.sign({school_id,callback_url,amount},edviron_pg_key)
 }
