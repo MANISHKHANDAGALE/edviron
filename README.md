@@ -1,7 +1,7 @@
 # 📖 Edviron Payments System  
 
-![React](https://img.shields.io/badge/Frontend-React-blue?logo=react)![TailwindCSS](https://img.shields.io/badge/UI-TailwindCSS-38B2AC?logo=tailwindcss)![Node.js](https://img.shields.io/badge/Backend-Node.js-green?logo=node.js)  
-![Express](https://img.shields.io/badge/API-Express-black?logo=express)![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?logo=mongodb) ![Vite](https://img.shields.io/badge/Build-Vite-purple?logo=vite)  
+![React](https://img.shields.io/badge/Frontend-React-blue?logo=react) ![TailwindCSS](https://img.shields.io/badge/UI-TailwindCSS-38B2AC?logo=tailwindcss) ![Node.js](https://img.shields.io/badge/Backend-Node.js-green?logo=node.js)  
+![Express](https://img.shields.io/badge/API-Express-black?logo=express) ![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?logo=mongodb) ![Vite](https://img.shields.io/badge/Build-Vite-purple?logo=vite)  
 
 ---
 
@@ -53,6 +53,11 @@ npm run dev
 PORT=4000
 MONGO_URI=mongodb://localhost:27017/edviron
 EDVIRON_API_KEY=your_edviron_api_key
+EDVIRON_PG_KEY=your_edviron_pg_key
+JWT_SECRET=secret
+JWT_EXPIRES_IN=7d
+PG_CREATE_COLLECT_URL=https://dev-vanilla.edviron.com/erp/create-collect-request
+PG_BASE_URL=https://dev-vanilla.edviron.com/erp
 ```
 
 ### 3. Frontend Setup  
@@ -77,7 +82,7 @@ Request:
   "school_id": "65b0e6293e9f76a9694d84b4",
   "amount": "2000",
   "order_id": "ORDER123",
-  "student_name": "John Doe",
+  "student_name": "manish",
   "phone": "9876543210"
 }
 ```
@@ -108,7 +113,7 @@ Response:
       "transaction_amount": 2000,
       "status": "success",
       "payment_mode": "UPI",
-      "student_name": "John Doe",
+      "student_name": "manish",
       "phone": "9876543210",
       "payment_time": "2025-09-11T12:34:56.000Z"
     }
@@ -137,20 +142,25 @@ Payload Example:
 
 ---
 
-## 🔗 Data Flow Diagram  
+## 🔗 Postman Testing  
 
-```mermaid
-flowchart LR
-    A[Frontend (React)] -->|POST /payments/create| B[Backend (Express.js)]
-    B -->|POST create-collect| C[Edviron API]
-    C -->|Response (collect_id + link)| B
-    B -->|Save pending| D[(MongoDB)]
-    A -->|GET /transactions| B
-    B -->|Return history| A
-    C -->|Webhook payload| E[Webhook Endpoint]
-    E -->|Update status| D
-    D -->|Updated data| A
-```
+### Login  
+![Login](./screenshots/postman-login.png)  
+
+### Register
+![Register](./screenshots/postman-register.png)  
+
+### create collect request 
+![create collect request](./screenshots/postman-create-collect-req.png)  
+
+### collect status 
+![collect status](./screenshots/postman-collect-status.png)
+
+### Webhook
+![webhook](./screenshots/postman-webhook.png)
+
+### Transaction
+![transaction](./screenshots/postman-transaction.png)
 
 ---
 
