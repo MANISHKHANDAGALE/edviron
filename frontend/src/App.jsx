@@ -1,19 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import LoginPage from "./pages/Login";
-import RegisterPage from "./pages/Register";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 import TransactionHistoryPage from "./pages/TransactionHistory";
 
 const App = () => {
   const [token, setToken] = useState(localStorage.getItem("authToken"));
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!token) {
-      navigate("/login");
-    }
-  }, [token, navigate]);
 
   const handleLogin = (authToken) => {
     localStorage.setItem("authToken", authToken);
