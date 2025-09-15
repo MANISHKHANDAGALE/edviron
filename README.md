@@ -74,7 +74,7 @@ Visit 👉 [http://localhost:5173](http://localhost:5173)
 ## 📡 API Documentation  
 
 ### 1. Create Collect  
-**POST** `/api/payments/create`  
+**POST** `/api/payments/create-collect-request`  
 
 Request:  
 ```json
@@ -83,7 +83,9 @@ Request:
   "amount": "2000",
   "order_id": "ORDER123",
   "student_name": "manish",
-  "phone": "9876543210"
+  "phone": "9876543210",
+  "callback_url" : edviron.com,
+  "sign" : this is generated using jwt.sign({school_id,callback_url,amount},edviron_pg_key)
 }
 ```
 
@@ -91,13 +93,45 @@ Response:
 ```json
 {
   "collect_id": "68c2a4cafe1ebb315a0bf662",
-  "payment_url": "https://dev-vanilla.edviron.com/pay/..."
+  "payment_url": "https://dev-vanilla.edviron.com/pay/...",
+  "sign": "........"
+}
+```
+### 2. collect-status (Payment Updates)  
+**GET** `/api/payments/status/:collect_request_id`  
+
+Payload Example:  
+```json
+{
+  "payload": {
+    "status": "success",
+    "amount": 2000,
+    "details": {
+      ...
+      ...
+     },
+     "jwt" : 
+    
+  }
+}
+```
+---
+### 3. Webhook (Payment Updates)  
+**POST** `/api/webhook`  
+
+Payload Example:  
+```json
+{
+  "payload": {
+    "order_id": "ORDER123",
+    "collect_id": "68c2a4cafe1ebb315a0bf662",
+    "transaction_amount": 2000,
+    "status": "success"
+  }
 }
 ```
 
----
-
-### 2. Transactions List  
+### 4. Transactions List  
 **GET** `/api/transactions?page=1&limit=10`  
 
 Response:  
@@ -123,20 +157,6 @@ Response:
 
 ---
 
-### 3. Webhook (Payment Updates)  
-**POST** `/api/webhook/payment`  
-
-Payload Example:  
-```json
-{
-  "payload": {
-    "order_id": "ORDER123",
-    "collect_id": "68c2a4cafe1ebb315a0bf662",
-    "transaction_amount": 2000,
-    "status": "success"
-  }
-}
-```
 
 👉 The backend updates the matching transaction in MongoDB.  
 
