@@ -1,4 +1,11 @@
 {
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/transactions",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",
