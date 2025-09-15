@@ -50,8 +50,8 @@ npm run dev
 
 #### Backend `.env`  
 ```env
-PORT=4000
-MONGO_URI=mongodb://localhost:27017/edviron
+PORT=5000
+MONGO_URI=mongodb://localhost:5000/edviron
 EDVIRON_API_KEY=your_edviron_api_key
 EDVIRON_PG_KEY=your_edviron_pg_key
 JWT_SECRET=secret
