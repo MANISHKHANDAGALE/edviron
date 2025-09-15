@@ -1,59 +1,61 @@
-import { useState, useEffect } from 'react';
-import Navbar from './components/Navbar';
-import LoginPage from './pages/Login';
-import RegisterPage from './pages/Register';
-import TransactionHistoryPage from './pages/TransactionHistory';
-import React from 'react';
-function App() {
-  const [currentPage, setCurrentPage] = useState('login');
-  const [token, setToken] = useState(localStorage.getItem('authToken'));
+import React, { useEffect, useState } from "react";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import LoginPage from "./pages/Login";
+import RegisterPage from "./pages/Register";
+import TransactionHistoryPage from "./pages/TransactionHistory";
 
-  // Check for token on initial load and set page accordingly
+const App = () => {
+  const [token, setToken] = useState(localStorage.getItem("authToken"));
+  const navigate = useNavigate();
+
   useEffect(() => {
-    if (token) {
-      setCurrentPage('transactions');
-    } else {
-      setCurrentPage('login');
+    if (!token) {
+      navigate("/login");
     }
-  }, [token]);
+  }, [token, navigate]);
 
   const handleLogin = (authToken) => {
-    localStorage.setItem('authToken', authToken);
+    localStorage.setItem("authToken", authToken);
     setToken(authToken);
-    setCurrentPage('transactions');
+    navigate("/transactions");
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('authToken');
+    localStorage.removeItem("authToken");
     setToken(null);
-    setCurrentPage('login');
+    navigate("/login");
   };
-
-  const handleNavigate = (page) => {
-    setCurrentPage(page);
-  };
-
-  let content;
-  switch (currentPage) {
-    case 'login':
-      content = <LoginPage onLogin={handleLogin} onNavigate={handleNavigate} />;
-      break;
-    case 'register':
-      content = <RegisterPage onNavigate={handleNavigate} />;
-      break;
-    case 'transactions':
-      content = <TransactionHistoryPage token={token} onLogout={handleLogout} />;
-      break;
-    default:
-      content = <LoginPage onLogin={handleLogin} onNavigate={handleNavigate} />;
-  }
 
   return (
     <div className="w-full flex flex-col items-center">
-      <Navbar currentPage={currentPage} onNavigate={handleNavigate} onLogout={handleLogout} token={token} />
-      {content}
+      <Navbar token={token} onLogout={handleLogout} />
+
+      <Routes>
+        {/* Default route */}
+        <Route path="/" element={<Navigate to="/login" />} />
+
+        {/* Auth routes */}
+        <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+        <Route path="/register" element={<RegisterPage />} />
+
+        {/* Protected route */}
+        <Route
+          path="/transactions"
+          element={
+            token ? (
+              <TransactionHistoryPage token={token} onLogout={handleLogout} />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+
+        {/* 404 fallback */}
+        <Route path="*" element={<h1>404 - Page Not Found</h1>} />
+      </Routes>
     </div>
   );
-}
+};
 
 export default App;
