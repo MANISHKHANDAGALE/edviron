@@ -1,74 +1,81 @@
-# 📖 Edviron Payments System – Full Documentation
+# 📖 Edviron Payments System  
 
-## 📌 Overview
-This project is a **full-stack payments system** for schools, built with:  
-
-- **Backend:** Express.js + MongoDB  
-- **Frontend:** React (Vite) + TailwindCSS  
-- **Integration:** Edviron `create-collect` API + Webhooks  
-
-It allows:  
-✅ Generating payment links for students (Create Collect)  
-✅ Processing real-time payment updates via Webhooks  
-✅ Storing transactions in MongoDB  
-✅ Viewing transaction history in a paginated dashboard  
+![React](https://img.shields.io/badge/Frontend-React-blue?logo=react)  
+![TailwindCSS](https://img.shields.io/badge/UI-TailwindCSS-38B2AC?logo=tailwindcss)  
+![Node.js](https://img.shields.io/badge/Backend-Node.js-green?logo=node.js)  
+![Express](https://img.shields.io/badge/API-Express-black?logo=express)  
+![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?logo=mongodb)  
+![Vite](https://img.shields.io/badge/Build-Vite-purple?logo=vite)  
 
 ---
 
-## ⚙️ Setup & Installation
+## 📌 Overview  
 
-### 1. Clone Repository
+A **full-stack payments system** integrated with **Edviron**.  
+It allows:  
+
+✅ Create Collect requests (payment links for students)  
+✅ Real-time transaction updates via Webhooks  
+✅ MongoDB persistence  
+✅ dashboard with search + filters  
+
+---
+
+## 🖼️ Website Preview  
+
+### 🔑 Login Page  
+![Login Page](./screenshots/login.png)  
+
+### 📂 Empty Storage (Before Login)  
+![Empty Storage](./screenshots/before-login.png)  
+
+### 📂 LocalStorage with AuthToken (After Login)  
+![AuthToken Stored](./screenshots/after-login.png)  
+
+### 📊 Payment History Dashboard  
+![Payment History](./screenshots/transactions.png)  
+
+---
+
+## ⚙️ Setup & Installation  
+
+### 1. Clone Repository  
 ```bash
 git clone https://github.com/your-repo/edviron-payments.git
 cd edviron-payments
 ```
 
-### 2. Backend Setup
+### 2. Backend Setup  
 ```bash
 cd backend
 npm install
 npm run dev
 ```
 
-#### Environment Variables (`backend/.env`)
+#### Backend `.env`  
 ```env
 PORT=4000
 MONGO_URI=mongodb://localhost:27017/edviron
 EDVIRON_API_KEY=your_edviron_api_key
-EDVIRON_SECRET=your_webhook_secret
 ```
 
-### 3. Frontend Setup
+### 3. Frontend Setup  
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-Visit 👉 [http://localhost:5173](http://localhost:5173)
+Visit 👉 [http://localhost:5173](http://localhost:5173)  
 
 ---
 
-## 🔑 Environment Variables (Backend)
+## 📡 API Documentation  
 
-| Variable            | Description |
-|---------------------|-------------|
-| `PORT`              | Port for Express backend (default `4000`) |
-| `MONGO_URI`         | MongoDB connection string |
-| `EDVIRON_API_KEY`   | API key from Edviron (for create-collect requests) |
-| `EDVIRON_SECRET`    | Secret key from Edviron (used for verifying webhook signatures) |
+### 1. Create Collect  
+**POST** `/api/payments/create`  
 
----
-
-## 📡 API Documentation
-
-### 1. Create Collect (Generate Payment Link)
-**Endpoint:**  
-```
-POST /api/payments/create
-```
-
-**Request Body:**
+Request:  
 ```json
 {
   "school_id": "65b0e6293e9f76a9694d84b4",
@@ -79,7 +86,7 @@ POST /api/payments/create
 }
 ```
 
-**Response:**
+Response:  
 ```json
 {
   "collect_id": "68c2a4cafe1ebb315a0bf662",
@@ -89,13 +96,10 @@ POST /api/payments/create
 
 ---
 
-### 2. Transactions (Paginated List)
-**Endpoint:**  
-```
-GET /api/transactions?page=1&limit=10
-```
+### 2. Transactions List  
+**GET** `/api/transactions?page=1&limit=10`  
 
-**Response:**
+Response:  
 ```json
 {
   "page": 1,
@@ -118,13 +122,10 @@ GET /api/transactions?page=1&limit=10
 
 ---
 
-### 3. Webhook (Payment Update)
-**Endpoint (Edviron calls this):**  
-```
-POST /api/webhook/payment
-```
+### 3. Webhook (Payment Updates)  
+**POST** `/api/webhook/payment`  
 
-**Payload:**
+Payload Example:  
 ```json
 {
   "payload": {
@@ -132,59 +133,72 @@ POST /api/webhook/payment
     "collect_id": "68c2a4cafe1ebb315a0bf662",
     "transaction_amount": 2000,
     "status": "success"
-  },
-  "sign": "sha256=..."
+  }
 }
 ```
 
-**Processing:**
-- Backend verifies the **HMAC signature** in `sign`.  
-- If valid → update DB record with new status.  
-- If invalid → reject (possible fraud).  
+👉 The backend updates the matching transaction in MongoDB.  
 
 ---
 
-## 🧪 Postman / ThunderClient Collection
-
-You can import the included `EdvironPayments.postman_collection.json` (or ThunderClient export) to test all APIs.  
-
-Collection includes:
-- **Create Collect** (with sample payload)  
-- **Webhook Simulation** (send test webhook events)  
-- **Transactions List** (with pagination params)  
-
-👉 To simulate webhooks, send a `POST` request to `/api/webhook/payment` with a test payload.  
-
----
-
-## 🔗 Data Flow Diagram
+## 🔗 Data Flow Diagram  
 
 ```mermaid
 flowchart LR
     A[Frontend (React)] -->|POST /payments/create| B[Backend (Express.js)]
-    B -->|POST create-collect-request| C[Edviron API]
+    B -->|POST create-collect| C[Edviron API]
     C -->|Response (collect_id + link)| B
-    B -->|Save pending transaction| D[(MongoDB)]
+    B -->|Save pending| D[(MongoDB)]
     A -->|GET /transactions| B
     B -->|Return history| A
-    C -->|Webhook (payload+sign)| E[Backend Webhook]
-    E -->|Verify + update status| D
+    C -->|Webhook payload| E[Webhook Endpoint]
+    E -->|Update status| D
     D -->|Updated data| A
 ```
 
 ---
 
-## 🎨 Frontend Features
-- Transaction History Page with:
-  - Search bar  
-  - Filters (Date, Status, Institute)  
-  - Paginated table  
-  - Row hover effects  
-  - Status highlighting (🟢 success, 🟡 pending, 🔴 failed)  
+## 🎨 Frontend Features  
+
+- ✅ Login system with JWT token stored in LocalStorage  
+- ✅ Paginated transactions table  
+- ✅ Search & filter support (status, school, date)  
+- ✅ Row hover + status colors (🟢 success, 🟡 pending, 🔴 failed)  
 
 ---
 
-## ✅ Summary
-- **Backend:** Handles Edviron API integration, signature verification, transaction persistence.  
-- **Frontend:** Displays payment history in a modern UI.  
-- **Data flow:** Frontend → Backend → Edviron → Webhook → DB → Frontend.  
+## 🎥 Walkthrough  
+
+Here’s how the flow works:  
+
+### 1️⃣ Login  
+User logs in with credentials.  
+![Login Page](./screenshots/login.png)  
+
+---
+
+### 2️⃣ Before Login  
+LocalStorage is empty → no authentication.  
+![Empty Storage](./screenshots/before-login.png)  
+
+---
+
+### 3️⃣ After Login  
+JWT AuthToken is stored in LocalStorage.  
+![AuthToken Stored](./screenshots/after-login.png)  
+
+---
+
+### 4️⃣ Dashboard  
+Transaction history is shown with pagination + filters.  
+![Payment History](./screenshots/transactions.png)  
+
+---
+
+## ✅ Summary  
+
+- **Backend:** Edviron integration + webhooks + MongoDB persistence  
+- **Frontend:** Login + JWT handling + transactions UI  
+- **Flow:** Login → Auth → Create Collect → Webhook Updates → Dashboard  
+
+⚡ Clean, modern, and production-ready!  
