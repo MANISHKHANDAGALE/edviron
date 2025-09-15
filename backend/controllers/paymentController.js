@@ -1,11 +1,11 @@
-// src/controllers/paymentController.js
+
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import Order from '../models/Order.js';
 import OrderStatus from '../models/OrderStatus.js';
 import { signPayloadForPG } from '../utils/signForPG.js';
 
-// ✅ Create Payment
+//  Create Payment
 export async function createPayment(req, res) {
   try {
     const { amount, callback_url, trustee_id, student_info } = req.body;
@@ -49,11 +49,11 @@ export async function createPayment(req, res) {
         }
       }
     );
-
+    // res from edviron post req api
     const data = pgResponse.data || {};
     const collectRequestId = data.collect_request_id || data.collectRequestId || null;
     const collectRequestUrl = data.collect_request_url || data.collectRequestUrl || data.Collect_request_url || null;
-
+    const signed = data.sign || null;
     // Save order status
     await OrderStatus.create({
       collect_id: order._id,
@@ -62,12 +62,13 @@ export async function createPayment(req, res) {
       status: 'PENDING',
       gateway: 'EDVIRON'
     });
-
+    // res from our post http://localhost:5000/api/payments/create-payment
     return res.json({
       message: 'Payment created',
       custom_order_id,
       collect_request_id: collectRequestId,
-      payment_url: collectRequestUrl
+      payment_url: collectRequestUrl,
+      sign:signed
     });
   } catch (err) {
     console.error('createPayment error:', err?.response?.data || err.message || err);
@@ -78,10 +79,10 @@ export async function createPayment(req, res) {
   }
 }
 
-// ✅ Check Payment Status
+// Check Payment Status
 export async function checkPaymentStatus(req, res) {
   try {
-    const { collect_request_id } = req.params;
+    const { collect_request_id} = req.params;
     if (!collect_request_id) {
       return res.status(400).json({ message: 'collect_request_id required' });
     }
@@ -98,8 +99,14 @@ export async function checkPaymentStatus(req, res) {
         headers: { 'Authorization': `Bearer ${process.env.PG_API_KEY}` }
       }
     );
+  const data = pgResponse.data || {};
 
-    return res.json(pgResponse.data);
+    return res.json({
+      status: data.status || null,
+      amount: data.amount || null,
+      details: data.details || null,
+      jwt: data.jwt || null
+    });
   } catch (err) {
     console.error('checkPaymentStatus error:', err?.response?.data || err.message || err);
     return res.status(500).json({ 

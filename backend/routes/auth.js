@@ -1,4 +1,4 @@
-// src/routes/auth.js
+
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -6,7 +6,7 @@ import User from '../models/User.js';
 
 const router = express.Router();
 
-// register (for dev/testing)
+// register 
 router.post('/register', async (req, res) => {
   const { email, password, name } = req.body;
   if (!email || !password) return res.status(400).json({ message: 'Email and password required' });

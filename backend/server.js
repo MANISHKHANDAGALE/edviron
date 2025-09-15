@@ -1,4 +1,4 @@
-// src/index.js
+
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -30,13 +30,12 @@ app.get("/api", (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/payments', paymentRoutes);
 
-// webhook is usually called by payment gateway, so keep it at root or /webhook
+// webhook
 app.use('/webhook', webhookRoutes);
 
 app.use('/api/transactions', transactionRoutes);
 
-// health check
-app.get('/health', (req, res) => res.json({ status: 'ok', time: new Date().toISOString() }));
+
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {

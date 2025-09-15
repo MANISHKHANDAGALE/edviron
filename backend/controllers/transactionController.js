@@ -1,4 +1,4 @@
-// src/controllers/transactionController.js
+
 import Order from '../models/Order.js';
 import OrderStatus from '../models/OrderStatus.js';
 
@@ -57,7 +57,7 @@ export async function getTransactions(req, res) {
   }
 }
 
-// ✅ Transactions by school
+//  Transactions by school
 export async function getTransactionsBySchool(req, res) {
   try {
     const schoolId = req.params.schoolId;
@@ -92,7 +92,7 @@ export async function getTransactionsBySchool(req, res) {
   }
 }
 
-// ✅ Single transaction status
+//  Single transaction status
 export async function getTransactionStatus(req, res) {
   try {
     const customOrderId = req.params.custom_order_id;
